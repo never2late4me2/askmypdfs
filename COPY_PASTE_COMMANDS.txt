@@ -1,0 +1,114 @@
+═══════════════════════════════════════════════════════════════════════════
+  GITHUB SETUP - COPY & PASTE COMMANDS
+═══════════════════════════════════════════════════════════════════════════
+
+📋 STEP 1: CREATE GITHUB REPOSITORY
+───────────────────────────────────────────────────────────────────────────
+Repository Name: askmypdfs
+
+Description:
+Multi-PDF Question Answering System with AI - Upload PDFs and ask questions across documents using RAG (Retrieval-Augmented Generation) powered by LangChain and HuggingFace Gemma-2-9B
+
+Topics (comma-separated):
+streamlit, pdf, langchain, ai, rag, question-answering, huggingface, faiss, nlp, machine-learning, python, gemma, document-analysis, vector-database, embeddings
+
+Settings:
+✅ Public
+✅ Add README: NO (we have our own)
+✅ Add .gitignore: NO (we have our own)
+✅ License: MIT
+
+
+📋 STEP 2: PUSH CODE TO GITHUB
+───────────────────────────────────────────────────────────────────────────
+Copy and paste these commands ONE BY ONE:
+
+cd AskMyPDFs_Fixed
+
+git init
+
+git add .
+
+git commit -m "Initial commit: Multi-PDF QA system with Ko-fi monetization
+
+✅ Fixed all import errors for latest LangChain
+✅ Implemented working document filter
+✅ Added comprehensive error handling
+✅ Configured Ko-fi monetization (ko-fi.com/bryantolbert)
+✅ Added HuggingFace token support
+✅ Complete deployment documentation
+✅ Production-ready for Streamlit Cloud"
+
+git branch -M main
+
+git remote add origin https://github.com/YOUR_USERNAME/askmypdfs.git
+
+git push -u origin main
+
+⚠️ REPLACE "YOUR_USERNAME" WITH YOUR ACTUAL GITHUB USERNAME!
+
+
+📋 STEP 3: DEPLOY TO STREAMLIT CLOUD
+───────────────────────────────────────────────────────────────────────────
+1. Go to: https://share.streamlit.io
+2. Click "New app"
+3. Repository: YOUR_USERNAME/askmypdfs
+4. Branch: main
+5. Main file: app.py
+6. Click "Advanced settings"
+7. Under "Secrets", paste:
+
+HF_TOKEN = "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"
+
+8. Click "Save"
+9. Click "Deploy!"
+10. Wait 2-3 minutes
+
+
+📋 REPOSITORY DESCRIPTION (for About section)
+───────────────────────────────────────────────────────────────────────────
+🤖 AI-powered multi-PDF question answering system using RAG, LangChain, and HuggingFace Gemma-2-9B
+
+
+📋 README BADGES (optional - add to top of README.md)
+───────────────────────────────────────────────────────────────────────────
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-app-name.streamlit.app)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20Me-ff5e5b?logo=ko-fi&logoColor=white)](https://ko-fi.com/bryantolbert)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
+📋 YOUR LINKS
+───────────────────────────────────────────────────────────────────────────
+Ko-fi: https://ko-fi.com/bryantolbert
+GitHub: https://github.com/YOUR_USERNAME/askmypdfs
+Streamlit: (will be generated after deployment)
+
+
+📋 IMPORTANT REMINDERS
+───────────────────────────────────────────────────────────────────────────
+✅ DO commit: All files EXCEPT .streamlit/secrets.toml
+❌ DON'T commit: .streamlit/secrets.toml (contains your token!)
+✅ Add secrets in Streamlit Cloud settings, not in code
+✅ Test Ko-fi button after deployment
+
+
+📋 TROUBLESHOOTING
+───────────────────────────────────────────────────────────────────────────
+If "Permission denied":
+git remote set-url origin https://github.com/YOUR_USERNAME/askmypdfs.git
+
+If secrets uploaded by mistake:
+git rm --cached .streamlit/secrets.toml
+git commit -m "Remove secrets"
+git push
+# Then regenerate your HuggingFace token!
+
+If deployment fails:
+- Check requirements.txt is in root directory
+- Verify secrets added in Streamlit Cloud
+- Check deployment logs for errors
+
+
+═══════════════════════════════════════════════════════════════════════════
+  READY TO GO! Start with STEP 1 above 🚀
+═══════════════════════════════════════════════════════════════════════════
