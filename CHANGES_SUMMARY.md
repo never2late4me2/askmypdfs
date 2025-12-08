@@ -147,7 +147,6 @@ Your app is now ready for Streamlit Cloud deployment:
 ### Your HuggingFace Token:
 Already configured in `.streamlit/secrets.toml`:
 ```
-HF_TOKEN = "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"
 ```
 
 ---
