@@ -447,4 +447,4 @@ st.markdown(
     "Made with ❤️ by Bryant Olbert • Updated Dec 07, 2025"
     "</p>",
     unsafe_allow_html=True
-)
+) 
