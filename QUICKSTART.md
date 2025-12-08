@@ -56,7 +56,7 @@ git push -u origin main
 5. Click **"Advanced settings"**
 6. Under **"Secrets"**, paste:
    ```toml
-   HF_TOKEN = "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"
+
    ```
 7. Click **"Deploy"**
 
