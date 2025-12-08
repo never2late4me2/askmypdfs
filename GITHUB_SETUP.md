@@ -198,7 +198,7 @@ Then go to **HuggingFace** and **regenerate your token** for security!
 7. Under **"Secrets"**, paste:
 
 ```toml
-HF_TOKEN = "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"
+
 ```
 
 8. Click **"Save"**
