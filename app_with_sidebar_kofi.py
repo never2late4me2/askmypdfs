@@ -9,8 +9,53 @@ import os
 
 # ========================= CONFIG =========================
 st.set_page_config(page_title="AskMyPDFs", page_icon="📚", layout="centered")
-st.title("📚 AskMyPDFs")
-st.caption("Multi‑PDF support · Latest LangChain + HuggingFace · Dec 2025")
+
+# ========================= SIDEBAR WITH KO-FI =========================
+with st.sidebar:
+    st.title("📚 AskMyPDFs")
+    st.caption("Multi‑PDF Question Answering")
+    
+    st.markdown("---")
+    st.markdown("### 💡 How to Use")
+    st.markdown("""
+    1. Upload one or more PDFs
+    2. Ask any question about them
+    3. Get answers with citations
+    4. Filter by specific documents
+    """)
+    
+    st.markdown("---")
+    st.markdown("### ☕ Support This Project")
+    st.markdown("""
+    If you find this tool helpful, consider buying me a coffee!
+    """)
+    
+    # Ko-fi button in sidebar
+    st.markdown(
+        """
+        <div style='text-align:center; margin: 20px 0;'>
+            <a href='https://ko-fi.com/bryantolbert' target='_blank'>
+                <img height='36' style='border:0px;height:36px;' 
+                     src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' 
+                     border='0' alt='Buy Me a Coffee at ko-fi.com' />
+            </a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    
+    st.markdown("---")
+    st.markdown("### 🔧 Tech Stack")
+    st.markdown("""
+    - **LLM:** Gemma-2-9B
+    - **Embeddings:** MiniLM-L6-v2
+    - **Vector DB:** FAISS
+    - **Framework:** LangChain
+    """)
+
+# ========================= MAIN CONTENT =========================
+st.title("📚 Ask Questions Across Your PDFs")
+st.caption("Upload multiple PDFs and get AI-powered answers with source citations")
 
 # ========================= INPUTS =========================
 pdfs = st.file_uploader("Upload one or more PDFs", type="pdf", accept_multiple_files=True)
@@ -194,26 +239,9 @@ else:
 
 # ========================= FOOTER =========================
 st.markdown("---")
-
-# Ko-fi donation button
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    st.markdown(
-        """
-        <div style='text-align:center;'>
-            <a href='https://ko-fi.com/bryantolbert' target='_blank'>
-                <img height='36' style='border:0px;height:36px;' 
-                     src='https://storage.ko-fi.com/cdn/kofi2.png?v=3' 
-                     border='0' alt='Buy Me a Coffee at ko-fi.com' />
-            </a>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
 st.markdown(
-    "<p style='text-align:center;color:#888;margin-top:20px;'>"
-    "Made with ❤️ by Bryant Olbert • Multi‑PDF filter support • Updated Dec 07, 2025"
+    "<p style='text-align:center;color:#888;'>"
+    "Made with ❤️ by Bryant Olbert • Updated Dec 07, 2025"
     "</p>",
     unsafe_allow_html=True
 )
