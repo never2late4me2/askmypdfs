@@ -58,7 +58,6 @@ git push -u origin main
 6. Click "Advanced settings"
 7. Under "Secrets", paste:
 
-HF_TOKEN = "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"
 
 8. Click "Save"
 9. Click "Deploy!"
