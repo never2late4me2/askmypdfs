@@ -1,11 +1,11 @@
 import streamlit as st
 from pypdf import PdfReader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings, HuggingFaceEndpoint
 from langchain_community.vectorstores import FAISS
 from langchain_classic.chains.retrieval_qa.base import RetrievalQA # FIX APPLIED HERE
 from langchain_core.prompts import PromptTemplate
-from langchain.schema import Document
+from langchain_core.documents import Document
 import os
 
 # ========================= CONFIG & CONSTANTS =========================
