@@ -1,8 +1,40 @@
-streamlit
-pypdf
-langchain
-langchain-huggingface
-langchain-community        """)
+import streamlit as st
+from pypdf import PdfReader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings, HuggingFaceEndpoint
+from langchain_community.vectorstores import FAISS
+from langchain.chains import RetrievalQA
+from langchain_core.prompts import PromptTemplate
+from langchain.schema import Document
+import os
+
+# ========================= CONFIG & CONSTANTS =========================
+st.set_page_config(page_title="AskMyPDFs Pro", page_icon="📚", layout="wide")
+
+# Initialize Text Splitter once for performance
+TEXT_SPLITTER = RecursiveCharacterTextSplitter(
+    chunk_size=2000,
+    chunk_overlap=400,
+    separators=["\n\n", "\n", " ", ""],
+    keep_separator=True
+)
+
+# ========================= UI COMPONENTS =========================
+
+def render_sidebar():
+    """Renders the application sidebar with instructions and tech stack."""
+    with st.sidebar:
+        st.title("📚 AskMyPDFs Pro")
+        st.caption("Multi‑PDF Question Answering with Advanced RAG")
+        
+        st.markdown("---")
+        st.markdown("### 💡 How to Use")
+        st.markdown("""
+        1. **Upload** one or more PDFs in the main area.
+        2. **Wait** for the vector database to build (cached for speed).
+        3. **Ask** any question about the documents.
+        4. **Filter** the search to a specific document if needed.
+        """)
         
         st.markdown("---")
         st.markdown("### 🔧 Tech Stack")
