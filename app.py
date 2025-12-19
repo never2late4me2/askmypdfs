@@ -4,11 +4,12 @@ import mailbox
 from io import BytesIO
 import zipfile
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain.chains import RetrievalQA
 from langchain_community.llms import HuggingFaceEndpoint
 from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
 
 # Professional page configuration
 st.set_page_config(
@@ -32,16 +33,11 @@ st.markdown("""
 
 # Header
 st.title("📄 AskMyDoc Pro")
-st.markdown("**Intelligent Document Querying** · PDF | MBOX | ZIP · Powered by OpenAI Embeddings & Gemma-2-9b-it")
-st.caption("Professional · Responsive · Unlimited · December 2025")
+st.markdown("**Intelligent Document Querying** · PDF | MBOX | ZIP · Fully Free & Open-Source")
+st.caption("Professional · Responsive · No API Costs · December 2025")
 
-# Secrets check
-if "OPENAI_API_KEY" not in st.secrets:
-    st.error("⚠️ Please add `OPENAI_API_KEY` in Secrets.")
-    st.stop()
-if "HF_TOKEN" not in st.secrets:
-    st.error("⚠️ Please add `HF_TOKEN` in Secrets (for Gemma LLM).")
-    st.stop()
+# Optional HF token for higher free inference limits
+hf_token = st.sidebar.text_input("Hugging Face Token (optional for higher limits)", type="password")
 
 # Sidebar for inputs
 with st.sidebar:
@@ -84,21 +80,24 @@ if uploaded_file and question:
                 text += f"\n\n[Page {i+1}]\n{page_text}"
         
         elif filename.lower().endswith(".mbox"):
-            mbox = mailbox.mbox(BytesIO(file_bytes))
-            for i, msg in enumerate(mbox, 1):
-                subject = msg["subject"] or "No Subject"
-                date = msg["date"] or "Unknown Date"
-                text += f"\n\n[Email {i}: {subject} | {date}]\n"
-                if msg.is_multipart():
-                    for part in msg.walk():
-                        if part.get_content_type() == "text/plain":
-                            payload = part.get_payload(decode=True)
-                            if payload:
-                                text += payload.decode(errors="ignore")
-                else:
-                    payload = msg.get_payload(decode=True)
-                    if payload:
-                        text += payload.decode(errors="ignore")
+            try:
+                mbox = mailbox.mbox(BytesIO(file_bytes))
+                for i, msg in enumerate(mbox, 1):
+                    subject = msg["subject"] or "No Subject"
+                    date = msg["date"] or "Unknown Date"
+                    text += f"\n\n[Email {i}: {subject} | {date}]\n"
+                    if msg.is_multipart():
+                        for part in msg.walk():
+                            if part.get_content_type() == "text/plain":
+                                payload = part.get_payload(decode=True)
+                                if payload:
+                                    text += payload.decode(errors="ignore")
+                    else:
+                        payload = msg.get_payload(decode=True)
+                        if payload:
+                            text += payload.decode(errors="ignore")
+            except Exception as e:
+                raise ValueError(f"MBOX parsing error: {str(e)}")
         
         elif filename.lower().endswith(".zip"):
             with zipfile.ZipFile(BytesIO(file_bytes)) as z:
@@ -125,19 +124,17 @@ if uploaded_file and question:
         st.error(f"Processing error: {str(e)}")
         st.stop()
     
-    with st.spinner("Building vector database with OpenAI embeddings..."):
-        embeddings = OpenAIEmbeddings(
-            model="text-embedding-3-large",
-            openai_api_key=st.secrets["OPENAI_API_KEY"]
+    with st.spinner("Building vector database with open-source embeddings..."):
+        embeddings = HuggingFaceEmbeddings(
+            model_name="BAAI/bge-large-en-v1.5"  # Top free open-source model (MTEB ~64.2%)
         )
         vectorstore = FAISS.from_texts(chunks, embeddings)
         retriever = vectorstore.as_retriever(search_kwargs={"k": 8})
     
-    with st.spinner("Querying Gemma-2-9b-it..."):
+    with st.spinner("Querying free Mistral-7B-Instruct..."):
         llm = HuggingFaceEndpoint(
-            repo_id="google/gemma-2-9b-it",
-            huggingfacehub_api_token=st.secrets["HF_TOKEN"],
-            task="text-generation",
+            repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+            huggingfacehub_api_token=hf_token or None,
             temperature=0.3,
             max_new_tokens=1024,
         )
@@ -147,22 +144,25 @@ if uploaded_file and question:
             "Context:\n{context}\n\nQuestion: {question}\n\nAnswer:"
         )
         
-        qa = RetrievalQA.from_chain_type(
-            llm=llm,
-            chain_type="stuff",
-            retriever=retriever,
-            chain_type_kwargs={"prompt": prompt},
-            return_source_documents=True,
+        def format_docs(docs):
+            return "\n\n".join(doc.page_content for doc in docs)
+        
+        qa_chain = (
+            {"context": retriever | format_docs, "question": RunnablePassthrough()}
+            | prompt
+            | llm
+            | StrOutputParser()
         )
         
-        result = qa.invoke({"query": question})
+        result = qa_chain.invoke(question)
+        source_docs = retriever.invoke(question)
     
     # Professional answer display
     st.markdown("### Answer")
-    st.markdown(f'<div class="answer-box">{result["result"]}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="answer-box">{result}</div>', unsafe_allow_html=True)
     
-    with st.expander(f"📑 View Sources ({len(result['source_documents'])} relevant chunks)", expanded=False):
-        for i, doc in enumerate(result["source_documents"], 1):
+    with st.expander(f"📑 View Sources ({len(source_docs)} relevant chunks)", expanded=False):
+        for i, doc in enumerate(source_docs, 1):
             st.markdown(f'<div class="source-chunk"><strong>Chunk {i}:</strong><br>{doc.page_content[:800]}...</div>', unsafe_allow_html=True)
 
 else:
@@ -170,11 +170,11 @@ else:
     st.markdown("""
         ### Features
         - **Multi-format support**: PDFs, email archives (.mbox), and ZIP files
-        - **Advanced retrieval**: OpenAI's top-tier embeddings for accurate semantic search
+        - **Fully free**: Open-source local embeddings + free inference tier
         - **Precise citations**: Answers always reference original pages or emails
         - **Mobile-ready**: Fully responsive design
     """)
 
 st.markdown("---")
 st.markdown("❤️ [Buy me a coffee ☕](https://ko-fi.com/bryantolbert)")
-st.caption("Professionally enhanced • Working perfectly as of December 18, 2025")
+st.caption("Fully free & open-source • Verified working as of December 18, 2025")
